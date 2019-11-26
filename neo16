@@ -1,0 +1,26 @@
+create(h1:hotel{name:"raj hotel",address:"camp area"}),
+        (h2:hotel{name:"maharaja hotel",address:"koregaon park"}),
+        (h3:hotel{name:"kamal hotel",address:"koregaon park"}),
+        (f1:facility{type:"lodging"}),
+        (f2:facility{type:"restaurant",type1:"lodging"}),
+        (p1:person{name:"deepak"}),
+        (p2:person{name:"akash"}),
+        (p3:person{name:"shurti"}),
+        (p4:person{name:"bhavya"})
+    
+create (h1)-[:has_facilities]->(f1),
+        (f2)<-[:has_facilities]-(h2)-[:has_facilities]->(f1),
+        (h1)<-[:visted]-(p1)-[:rated{rating:"4.5"}]->(h1),
+        (h1)<-[:visted]-(p2)-[:rated{rating:"4"}]->(h1),
+        (h2)<-[:visted]-(p3)-[:rated{rating:"3"}]->(h2),
+        (h2)<-[:visted]-(p4)-[:rated{rating:"3.5"}]->(h2),
+        (h2)<-[:visted]-(p1)-[:rated{rating:"4"}]->(h2),
+        (p1)-[:recommendend]->(h1)-[:to]->(p2),
+        (p2)-[:recommendend]->(h2)-[:to]->(p3),
+        (p3)-[:recommendend]->(h2)-[:to]->(p1),
+        (p4)-[:recommendend]->(h3)-[:to]->(p2) return h1,h2,h3,f1,f2,p1,p2,p3,p4
+
+A: match(h:hotel) where h.address="camp area" return h
+b: match(h:hotel)-[:has_facilities]->(f:facility) where f.type1="lodging" and f.type="restaurant" return h
+c: match(p:person)-[r:rated]->(h:hotel) where r.rating >="4" return h
+D: match(p:person)-[r:recommendend]->(h:hotel) where h.address="koregaon park" return h,count(r) as cnt
